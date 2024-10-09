@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: <nombre del service>
+  name: casalunaservice
   namespace: casalunak8s
 spec:
   selector:
