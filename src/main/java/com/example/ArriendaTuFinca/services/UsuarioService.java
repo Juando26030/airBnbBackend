@@ -41,10 +41,11 @@ public class UsuarioService {
             if (usuario.getAutenticado()) {
                 return modelMapper.map(usuario, UsuarioDTO.class); // El usuario está autenticado
             } else {
-                throw new IllegalArgumentException("Debe autenticar su usuario antes de iniciar sesión.");
+                // El usuario no ha autenticado su cuenta
+                throw new IllegalArgumentException("El usuario debe autenticar su cuenta desde el correo electrónico.");
             }
         } else {
-            return null; // Retornar null si no existe un usuario con esas credenciales
+            throw new IllegalArgumentException("Correo o contraseña incorrectos.");
         }
     }
 

@@ -43,17 +43,20 @@ public class UsuarioController {
         try {
             UsuarioDTO usuarioAutenticado = usuarioService.autenticarUsuario(correo, contrasenia);
             if (usuarioAutenticado != null) {
-                // Login exitoso
-                return ResponseEntity.ok(true);  // Retorna true si el login fue exitoso
+                return ResponseEntity.ok(usuarioAutenticado);  // Usuario autenticado con éxito
             } else {
-                // Login fallido
                 return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
             }
         } catch (IllegalArgumentException e) {
-            // Error por usuario no autenticado
-            return ResponseEntity.status(401).body(e.getMessage());
+            // Si el mensaje es sobre la autenticación, devolvemos 403 (Forbidden)
+            if (e.getMessage().contains("autenticar su cuenta")) {
+                return ResponseEntity.status(403).body(e.getMessage()); // Usuario no autenticado
+            } else {
+                return ResponseEntity.status(401).body(e.getMessage()); // Credenciales incorrectas
+            }
         }
     }
+
 
     // Validar
     @CrossOrigin
