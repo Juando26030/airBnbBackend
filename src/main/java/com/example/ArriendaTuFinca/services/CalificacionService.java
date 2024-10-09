@@ -66,7 +66,7 @@ public class CalificacionService {
         if(solicitud.isPresent()){
             calificacion.setSolicitud_id(solicitud.get());
             calificacion = calificacionRepository.save(calificacion);
-            calificacionDTO.setCalificacion_id(calificacion.getCalificacion_id());
+            calificacionDTO.setCalificacion_id(calificacion.getCalificacionId());
             return calificacionDTO;
         }
         
@@ -85,7 +85,7 @@ public class CalificacionService {
         if(solicitud.isPresent()){
             calificacion.setSolicitud_id(solicitud.get());
             calificacion = calificacionRepository.save(calificacion);
-            calificacionDTO.setCalificacion_id(calificacion.getCalificacion_id());
+            calificacionDTO.setCalificacion_id(calificacion.getCalificacionId());
             return calificacionDTO;
         }
         

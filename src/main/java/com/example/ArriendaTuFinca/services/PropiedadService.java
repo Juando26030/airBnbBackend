@@ -81,7 +81,7 @@ public class PropiedadService {
         
             // Obtener el objeto UsuarioDTO del DTO de Propiedad
             UsuarioDTO arrendadorDTO = propiedadDTO.getArrendadorId();
-            Long arrendadorId = arrendadorDTO.getUsuario_id();
+            Long arrendadorId = arrendadorDTO.getUsuarioId();
             
             Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
             if (usuarioOptional.isPresent()) {

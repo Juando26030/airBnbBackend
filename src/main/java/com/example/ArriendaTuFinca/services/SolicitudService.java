@@ -65,7 +65,7 @@ public class SolicitudService {
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
         
         UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatario_id();
-        long arrendatario_id = arrendatarioDTO.getUsuario_id();
+        long arrendatario_id = arrendatarioDTO.getUsuarioId();
 
         PropiedadDTO propiedadDTO = solicitudDTO.getPropiedad_id();
         long propiedad_id = propiedadDTO.getPropiedadId();

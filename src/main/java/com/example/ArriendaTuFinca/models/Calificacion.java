@@ -29,7 +29,7 @@ import lombok.Setter;
 public class Calificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long calificacion_id;
+    private Long calificacionId;
 
     //mirar si hay problema en que sean iguales
     @ManyToOne

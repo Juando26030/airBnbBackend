@@ -6,7 +6,7 @@ metadata:
 spec:
    ingressClassName: public
    rules:
-   - host: 
+   - host:
      http:
        paths:
        - path: /api/javeriana/estudiante
