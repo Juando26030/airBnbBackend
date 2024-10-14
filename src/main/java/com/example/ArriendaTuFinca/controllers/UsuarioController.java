@@ -86,7 +86,7 @@ public class UsuarioController {
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
         try {
-            usuarioDTO.setUsuarioId(id);  // Asegura que el ID se use para actualizar el usuario correcto
+            usuarioDTO.setUsuario_id(id);  // Asegura que el ID se use para actualizar el usuario correcto
             UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(usuarioDTO);
             return ResponseEntity.ok(usuarioActualizado);
         } catch (IllegalArgumentException e) {

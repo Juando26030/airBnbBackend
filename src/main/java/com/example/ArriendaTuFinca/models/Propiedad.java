@@ -30,17 +30,17 @@ public class Propiedad {
 
     @ManyToOne
     @JoinColumn(name = "arrendador_id", referencedColumnName = "usuario_id", unique = false, nullable = false)  //arrendador_id es el nombre de la columna en la tabla Propiedad
-    private Usuario arrendadorId;
+    private Usuario arrendador_id;
 
     private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
-    private String tipoDeIngreso;
+    private String tipo_de_ingreso;
     private String descripcion;
-    private int cantBanos;
-    private int cantHabitaciones;
-    private int cantPersonas;
+    private int cant_banos;
+    private int cant_habitaciones;
+    private int cantPersonas;   //y al otro lado que??????
     private boolean mascotas;
     private boolean piscina;
     private boolean asador;

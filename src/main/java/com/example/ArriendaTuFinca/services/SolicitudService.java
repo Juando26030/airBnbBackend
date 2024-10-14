@@ -63,12 +63,12 @@ public class SolicitudService {
     //ese problema que
     public SolicitudDTO crearSolicitud(SolicitudDTO solicitudDTO) {
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
-        
+
         UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatario_id();
-        long arrendatario_id = arrendatarioDTO.getUsuarioId();
+        long arrendatario_id = arrendatarioDTO.getUsuario_id();
 
         PropiedadDTO propiedadDTO = solicitudDTO.getPropiedad_id();
-        long propiedad_id = propiedadDTO.getPropiedadId();
+        long propiedad_id = propiedadDTO.getPropiedad_id();
 
         Optional<Usuario> arrendatarioOptional = usuarioRepository.findById(arrendatario_id);
         Optional<Propiedad> propiedadOptional = propiedadRepository.findById(propiedad_id);

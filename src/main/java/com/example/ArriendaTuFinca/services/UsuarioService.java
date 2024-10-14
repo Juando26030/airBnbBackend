@@ -89,10 +89,12 @@ public class UsuarioService {
         usuario.setAutenticado(false); // Usuario no autenticado por defecto
         usuario = usuarioRepository.save(usuario);
 
+        usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
+
         // Enviar el correo de activación
         enviarCorreoActivacion(usuario);
 
-        return modelMapper.map(usuario, UsuarioDTO.class);
+        return usuarioDTO;
     }
 
     // Método para activar la cuenta de usuario
