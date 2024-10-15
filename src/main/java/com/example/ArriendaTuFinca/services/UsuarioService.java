@@ -49,7 +49,6 @@ public class UsuarioService {
         }
     }
 
-
     //get
     public List<UsuarioDTO> get() {
         List<Usuario> usuarios = usuarioRepository.findAll();

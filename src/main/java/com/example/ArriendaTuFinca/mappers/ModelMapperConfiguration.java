@@ -25,7 +25,7 @@ public class ModelMapperConfiguration {
 
     // Configuración de ModelMapper PROFESOR
     @Bean
-    public ModelMapper moddelMapper(){
+    public ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
