@@ -57,12 +57,13 @@ public class PropiedadController {
     }
 
 
-    // Método para buscar propiedades por filtros de ubicación y/o cantidad de personas
+    // Método para buscar propiedades por filtros de departamento, municipio y/o cantidad de personas
     @CrossOrigin
-    @GetMapping(value = "/buscar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PropiedadDTO> buscarPropiedades(@RequestParam(value = "ubicacion", required = false) String ubicacion,
+    @GetMapping(value = "/buscar", produces = "application/json")
+    public List<PropiedadDTO> buscarPropiedades(@RequestParam(value = "departamento", required = false) String departamento,
+                                                @RequestParam(value = "municipio", required = false) String municipio,
                                                 @RequestParam(value = "cant_personas", required = false) Integer cantPersonas) {
-        return propiedadService.buscarPropiedadesPorFiltros(ubicacion, cantPersonas);
+        return propiedadService.buscarPropiedadesPorFiltros(departamento, municipio, cantPersonas);
     }
     
 }

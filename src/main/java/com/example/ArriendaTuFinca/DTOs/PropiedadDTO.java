@@ -6,16 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PropiedadDTO {
-    private Long propiedadId;
-    private UsuarioDTO arrendadorId; // Toca dejarlo asi porque Hybernate lo cambia
+    private Long propiedad_id;
+    private UsuarioDTO arrendador_id; // Toca dejarlo asi porque Hybernate lo cambia
     private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
-    private String tipoDeIngreso;
+    private String tipo_de_ingreso;
     private String descripcion;
-    private int cantBanos;
-    private int cantHabitaciones;
+    private int cant_banos;
+    private int cant_habitaciones;
     private int cantPersonas;
     private boolean mascotas;
     private boolean piscina;

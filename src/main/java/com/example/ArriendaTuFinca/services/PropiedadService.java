@@ -74,29 +74,29 @@ public class PropiedadService {
     }    
         */
 
-        public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
-            // Mapea el DTO a la entidad (model Mapper)
-            Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
-            propiedad.setEstado(Estado.ACTIVE);
-        
-            // Obtener el objeto UsuarioDTO del DTO de Propiedad
-            UsuarioDTO arrendadorDTO = propiedadDTO.getArrendadorId();
-            Long arrendadorId = arrendadorDTO.getUsuarioId();
-            
-            Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
-            if (usuarioOptional.isPresent()) {
-                // Usar el usuario existente en lugar de crear uno nuevo
-                propiedad.setArrendadorId(usuarioOptional.get());    //trae todo el usu
-                propiedad = propiedadRepository.save(propiedad);   //guarda la propiedad (persistencia)
-        
-                // Actualizar el DTO con el ID generado de la propiedad
-                propiedadDTO.setPropiedadId(propiedad.getPropiedad_id());
-                return propiedadDTO;
-            }
-        
-            // Manejar el caso en que el usuario no exista
-            throw new IllegalArgumentException("El arrendador con ID " + arrendadorId + " no existe.");
+    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
+        // Mapea el DTO a la entidad (model Mapper)
+        Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
+        propiedad.setEstado(Estado.ACTIVE);
+
+        // Obtener el objeto UsuarioDTO del DTO de Propiedad
+        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendador_id();
+        Long arrendadorId = arrendadorDTO.getUsuario_id();
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
+        if (usuarioOptional.isPresent()) {
+            // Usar el usuario existente en lugar de crear uno nuevo
+            propiedad.setArrendador_id(usuarioOptional.get());    //trae todo el usu
+            propiedad = propiedadRepository.save(propiedad);   //guarda la propiedad (persistencia)
+
+            // Actualizar el DTO con el ID generado de la propiedad
+            propiedadDTO.setPropiedad_id(propiedad.getPropiedad_id());
+            return propiedadDTO;
         }
+
+        // Manejar el caso en que el usuario no exista
+        throw new IllegalArgumentException("El arrendador con ID " + arrendadorId + " no existe.");
+    }
         
     //put
     public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
@@ -114,27 +114,40 @@ public class PropiedadService {
 
 
     // Método que implementa la lógica de búsqueda por ubicación y/o cantidad de personas
-    public List<PropiedadDTO> buscarPropiedadesPorFiltros(String ubicacion, Integer cantPersonas) {
+    // Método que implementa la lógica de búsqueda por departamento, municipio y/o cantidad de personas
+    public List<PropiedadDTO> buscarPropiedadesPorFiltros(String departamento, String municipio, Integer cantPersonas) {
         List<Propiedad> propiedadesFiltradas;
 
-        // Si ambos parámetros están presentes
-        if (ubicacion != null && cantPersonas != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndCantPersonas(ubicacion, cantPersonas);
+        // Si están presentes todos los filtros
+        if (departamento != null && municipio != null && cantPersonas != null) {
+            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndMunicipioAndCantPersonas(departamento, municipio, cantPersonas);
         }
-        // Si solo la ubicación está presente
-        else if (ubicacion != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamento(ubicacion);
+        // Si están presentes departamento y cantidad de personas (sin municipio)
+        else if (departamento != null && cantPersonas != null) {
+            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndCantPersonas(departamento, cantPersonas);
         }
-        // Si solo la cantidad de personas está presente
+        // Si están presentes departamento y municipio (sin cantidad de personas)
+        else if (departamento != null && municipio != null) {
+            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndMunicipio(departamento, municipio);
+        }
+        // Si solo está el departamento
+        else if (departamento != null) {
+            propiedadesFiltradas = propiedadRepository.findByDepartamento(departamento);
+        }
+        // Si solo está el municipio
+        else if (municipio != null) {
+            propiedadesFiltradas = propiedadRepository.findByMunicipio(municipio);
+        }
+        // Si solo está la cantidad de personas
         else if (cantPersonas != null) {
             propiedadesFiltradas = propiedadRepository.findByCantPersonas(cantPersonas);
         }
-        // Si no se proporcionó ningún filtro, devuelve una lista vacía o todas las propiedades según prefieras
+        // Si no se proporcionó ningún filtro, devolver todas las propiedades
         else {
             propiedadesFiltradas = propiedadRepository.findAll();
         }
 
-        // Convertir las entidades Propiedad a PropiedadDTO usando ModelMapper
+        // Convertir las entidades a DTOs y devolver
         return propiedadesFiltradas.stream()
                 .map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))
                 .collect(Collectors.toList());

@@ -30,6 +30,8 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usuario_id;
+
+
     private String nombre;
     private String correo;
     private String telefono;
