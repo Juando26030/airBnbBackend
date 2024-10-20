@@ -25,4 +25,7 @@ public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
 
     // Buscar propiedades solo por cantidad de personas
     List<Propiedad> findByCantPersonas(int cantPersonas);
+
+    // Buscar propiedades por id de admin
+    List<Propiedad> findByArrendador_UsuarioId(Long id_admin);
 }

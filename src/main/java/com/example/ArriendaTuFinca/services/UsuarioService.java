@@ -13,7 +13,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
-import com.example.ArriendaTuFinca.models.Estado;
 import com.example.ArriendaTuFinca.models.Usuario;
 import com.example.ArriendaTuFinca.repository.UsuarioRepository;
 
@@ -84,8 +83,6 @@ public class UsuarioService {
         // Validaciones de correo y contraseña
 
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setEstado(Estado.INACTIVE); // El usuario se crea como inactivo por defecto
-        usuario.setAutenticado(false); // Usuario no autenticado por defecto
         usuario = usuarioRepository.save(usuario);
 
         usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
@@ -101,7 +98,6 @@ public class UsuarioService {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            usuario.setEstado(Estado.ACTIVE); // Cambiar estado a activo
             usuario.setAutenticado(true); // Marcar como autenticado
             usuario = usuarioRepository.save(usuario); // Guardar cambios en la base de datos
             return modelMapper.map(usuario, UsuarioDTO.class);
@@ -115,7 +111,7 @@ public class UsuarioService {
             String subject = "Por favor active su cuenta";
             // Usar un valor configurable para la URL base
             String baseUrl = "http://localhost:8081"; // Puedes externalizar esto a application.properties
-            String activationUrl = baseUrl + "/api/usuarios/activar/" + usuario.getUsuario_id();
+            String activationUrl = baseUrl + "/api/usuarios/activar/" + usuario.getUsuarioId();
             String message = "Por favor active su cuenta haciendo clic en el siguiente enlace: " + activationUrl;
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -135,7 +131,6 @@ public class UsuarioService {
     //put
     public UsuarioDTO actualizarUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setEstado(Estado.ACTIVE);
         usuario = usuarioRepository.save(usuario);
         usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
         return usuarioDTO;

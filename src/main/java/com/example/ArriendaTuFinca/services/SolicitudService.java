@@ -1,10 +1,8 @@
 package com.example.ArriendaTuFinca.services;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.repository.PropiedadRepository;
 import com.example.ArriendaTuFinca.repository.UsuarioRepository;
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
 import com.example.ArriendaTuFinca.repository.SolicitudRepository;
-import com.example.ArriendaTuFinca.repository.PropiedadRepository;
-import com.example.ArriendaTuFinca.models.Estado;
 import com.example.ArriendaTuFinca.models.Propiedad;
 import com.example.ArriendaTuFinca.models.Usuario;
 import com.example.ArriendaTuFinca.models.Solicitud;

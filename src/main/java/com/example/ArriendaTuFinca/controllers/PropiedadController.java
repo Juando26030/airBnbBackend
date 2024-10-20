@@ -59,11 +59,18 @@ public class PropiedadController {
 
     // Método para buscar propiedades por filtros de departamento, municipio y/o cantidad de personas
     @CrossOrigin
-    @GetMapping(value = "/buscar", produces = "application/json")
-    public List<PropiedadDTO> buscarPropiedades(@RequestParam(value = "departamento", required = false) String departamento,
+    @GetMapping(value = "/buscar-usuario", produces = "application/json")
+    public List<PropiedadDTO> buscarPropiedadesUsuario(@RequestParam(value = "departamento", required = false) String departamento,
                                                 @RequestParam(value = "municipio", required = false) String municipio,
                                                 @RequestParam(value = "cant_personas", required = false) Integer cantPersonas) {
         return propiedadService.buscarPropiedadesPorFiltros(departamento, municipio, cantPersonas);
+    }
+
+    // Método para buscar propiedades por id de admin
+    @CrossOrigin
+    @GetMapping(value = "/buscar-admin/{id_admin}", produces = "application/json")
+    public List<PropiedadDTO> buscarPropiedadesAdmin(@PathVariable Long id_admin){
+        return propiedadService.buscarPropiedadesAdmin(id_admin);
     }
     
 }

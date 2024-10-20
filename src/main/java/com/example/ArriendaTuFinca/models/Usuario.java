@@ -29,14 +29,13 @@ import lombok.Setter;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long usuario_id;
+    private Long usuarioId;
 
 
     private String nombre;
     private String correo;
     private String telefono;
     private String contrasenia;
-    private Estado estado;
     private String rol;  // Tipo de usuario (arrendador o arrendatario)
     private Boolean autenticado = false; // Indica si el usuario está autenticado
 }
