@@ -72,14 +72,12 @@ public class PropiedadService {
     }    
         */
 
-    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
+    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO, Long arrendadorId) {
         // Mapea el DTO a la entidad (model Mapper)
         Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
         propiedad.setEstado(ACTIVO);
 
-        // Obtener el objeto UsuarioDTO del DTO de Propiedad
-        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendadorId();
-        Long arrendadorId = arrendadorDTO.getUsuarioId();
+        propiedadDTO.setArrendadorId(arrendadorId);
 
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
         if (usuarioOptional.isPresent()) {

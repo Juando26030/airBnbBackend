@@ -39,9 +39,12 @@ public class PropiedadController {
     }
 
     // Create
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public PropiedadDTO crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
-        return propiedadService.crearPropiedad(propiedadDTO);
+    @PostMapping(value = "/crear/{arrendador_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PropiedadDTO crearPropiedad(
+            @RequestBody PropiedadDTO propiedadDTO,
+            @PathVariable Long arrendador_id
+    ) {
+        return propiedadService.crearPropiedad(propiedadDTO, arrendador_id);
     }
 
     // Update
