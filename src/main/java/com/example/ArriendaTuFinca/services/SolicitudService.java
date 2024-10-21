@@ -59,20 +59,20 @@ public class SolicitudService {
     public SolicitudDTO crearSolicitud(SolicitudDTO solicitudDTO) {
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
 
-        UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatario_id();
-        long arrendatario_id = arrendatarioDTO.getUsuario_id();
+        UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatarioId();
+        long arrendatario_id = arrendatarioDTO.getUsuarioId();
 
-        PropiedadDTO propiedadDTO = solicitudDTO.getPropiedad_id();
+        PropiedadDTO propiedadDTO = solicitudDTO.getPropiedadId();
         long propiedad_id = propiedadDTO.getPropiedad_id();
 
         Optional<Usuario> arrendatarioOptional = usuarioRepository.findById(arrendatario_id);
         Optional<Propiedad> propiedadOptional = propiedadRepository.findById(propiedad_id);
 
         if (arrendatarioOptional.isPresent() && propiedadOptional.isPresent()) {
-            solicitud.setArrendatario_id(arrendatarioOptional.get());
-            solicitud.setPropiedad_id(propiedadOptional.get());
+            solicitud.getArrendatario().setUsuarioId(arrendatarioOptional.get().getUsuarioId());
+            solicitud.getPropiedad().setPropiedadId(propiedadOptional.get().getPropiedadId());
             solicitud = solicitudRepository.save(solicitud);
-            solicitudDTO.setSolicitud_id(solicitud.getSolicitud_id());
+            solicitudDTO.setSolicitudId(solicitud.getSolicitudId());
             return solicitudDTO;
         }
 
