@@ -33,9 +33,9 @@ public class Pago {
     private long pago_id;
 
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitud_id", unique = false, nullable = false) 
-    private Solicitud solicitud_id;
+    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitudId", unique = false, nullable = false)
+    private Solicitud solicitudId;
 
     private int monto;
-    private LocalDate fecha_pago;
+    private LocalDate fechaPago;
 }

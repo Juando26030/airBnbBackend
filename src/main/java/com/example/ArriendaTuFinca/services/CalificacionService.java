@@ -52,15 +52,15 @@ public class CalificacionService {
     public CalificacionDTO crearCalificacion(CalificacionDTO calificacionDTO) {
         Calificacion calificacion = modelMapper.map(calificacionDTO, Calificacion.class);
 
-        SolicitudDTO solicitudDTO = calificacionDTO.getSolicitud_id();
-        long solicitud_id = solicitudDTO.getSolicitud_id();
+        SolicitudDTO solicitudDTO = calificacionDTO.getSolicitudId();
+        long solicitud_id = solicitudDTO.getSolicitudId();
 
         Optional<Solicitud> solicitud = solicitudRepository.findById(solicitud_id);
 
         if(solicitud.isPresent()){
-            calificacion.setSolicitud_id(solicitud.get());
+            calificacion.getSolicitud().setSolicitudId(solicitud.get().getSolicitudId());
             calificacion = calificacionRepository.save(calificacion);
-            calificacionDTO.setCalificacion_id(calificacion.getCalificacionId());
+            calificacionDTO.setCalificacionId(calificacion.getCalificacionId());
             return calificacionDTO;
         }
         
@@ -71,15 +71,15 @@ public class CalificacionService {
     public CalificacionDTO actualizarCalificacion(CalificacionDTO calificacionDTO) {
         Calificacion calificacion = modelMapper.map(calificacionDTO, Calificacion.class);
 
-        SolicitudDTO solicitudDTO = calificacionDTO.getSolicitud_id();
-        long solicitud_id = solicitudDTO.getSolicitud_id();
+        SolicitudDTO solicitudDTO = calificacionDTO.getSolicitudId();
+        long solicitud_id = solicitudDTO.getSolicitudId();
 
         Optional<Solicitud> solicitud = solicitudRepository.findById(solicitud_id);
 
         if(solicitud.isPresent()){
-            calificacion.setSolicitud_id(solicitud.get());
+            calificacion.getSolicitud().setSolicitudId(solicitud.get().getSolicitudId());
             calificacion = calificacionRepository.save(calificacion);
-            calificacionDTO.setCalificacion_id(calificacion.getCalificacionId());
+            calificacionDTO.setCalificacionId(calificacion.getCalificacionId());
             return calificacionDTO;
         }
         

@@ -7,10 +7,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class SolicitudDTO {
-    private Long solicitud_id;
-    private UsuarioDTO arrendatario_id;
-    private PropiedadDTO propiedad_id;
-    private LocalDate fecha_inicio;
-    private LocalDate fecha_fin;
-    private int precio_por_noche;
+    private Long solicitudId;
+    private UsuarioDTO arrendatarioId;
+    private PropiedadDTO propiedadId;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private int precioPorNoche;
 }

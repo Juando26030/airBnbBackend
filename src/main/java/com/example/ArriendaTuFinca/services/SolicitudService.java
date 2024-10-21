@@ -63,14 +63,14 @@ public class SolicitudService {
         long arrendatario_id = arrendatarioDTO.getUsuarioId();
 
         PropiedadDTO propiedadDTO = solicitudDTO.getPropiedadId();
-        long propiedad_id = propiedadDTO.getPropiedad_id();
+        long propiedad_id = propiedadDTO.getPropiedadId();
 
         Optional<Usuario> arrendatarioOptional = usuarioRepository.findById(arrendatario_id);
         Optional<Propiedad> propiedadOptional = propiedadRepository.findById(propiedad_id);
 
         if (arrendatarioOptional.isPresent() && propiedadOptional.isPresent()) {
-            solicitud.getArrendatario().setUsuarioId(arrendatarioOptional.get().getUsuarioId());
-            solicitud.getPropiedad().setPropiedadId(propiedadOptional.get().getPropiedadId());
+            solicitud.getArrendatarioId().setUsuarioId(arrendatarioOptional.get().getUsuarioId());
+            solicitud.getPropiedadId().setPropiedadId(propiedadOptional.get().getPropiedadId());
             solicitud = solicitudRepository.save(solicitud);
             solicitudDTO.setSolicitudId(solicitud.getSolicitudId());
             return solicitudDTO;

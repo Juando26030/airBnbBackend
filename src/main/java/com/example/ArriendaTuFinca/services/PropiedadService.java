@@ -78,8 +78,8 @@ public class PropiedadService {
         propiedad.setEstado(ACTIVO);
 
         // Obtener el objeto UsuarioDTO del DTO de Propiedad
-        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendador_id();
-        Long arrendadorId = arrendadorDTO.getUsuario_id();
+        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendadorId();
+        Long arrendadorId = arrendadorDTO.getUsuarioId();
 
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
         if (usuarioOptional.isPresent()) {
@@ -88,7 +88,7 @@ public class PropiedadService {
             propiedad = propiedadRepository.save(propiedad);   //guarda la propiedad (persistencia)
 
             // Actualizar el DTO con el ID generado de la propiedad
-            propiedadDTO.setPropiedad_id(propiedad.getPropiedad_id());
+            propiedadDTO.setPropiedadId(propiedad.getPropiedadId());
             return propiedadDTO;
         }
 
@@ -100,7 +100,7 @@ public class PropiedadService {
     public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
         Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
         propiedad.setEstado(ACTIVO);
-        propiedad.setPropiedad_id(id);
+        propiedad.setPropiedadId(id);
         propiedadDTO = modelMapper.map(propiedadRepository.save(propiedad), PropiedadDTO.class);
         return propiedadDTO;
     }
@@ -145,6 +145,7 @@ public class PropiedadService {
             propiedadesFiltradas = propiedadRepository.findAll();
         }
 
+        System.out.println(propiedadesFiltradas);
         // Convertir las entidades a DTOs y devolver
         return propiedadesFiltradas.stream()
                 .map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))

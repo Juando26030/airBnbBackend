@@ -48,6 +48,7 @@ public class UsuarioService {
         }
     }
 
+
     //get
     public List<UsuarioDTO> get() {
         List<Usuario> usuarios = usuarioRepository.findAll();
@@ -71,8 +72,10 @@ public class UsuarioService {
     // Código existente...
 
     public boolean correoExiste(String correo) {
-        return usuarioRepository.findByCorreo(correo).isPresent();
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo); // asumiendo que tienes un método en el repositorio
+        return usuarioOpt.isPresent();
     }
+
 
     // Método actualizado para crear usuario
     public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {

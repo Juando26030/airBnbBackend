@@ -20,17 +20,17 @@ import javax.persistence.Transient;
 public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long propiedad_id;
+    private Long propiedadId;
 
     @ManyToOne
-    @JoinColumn(name = "arrendador_id", referencedColumnName = "usuario_id", nullable = false)
+    @JoinColumn(name = "arrendador_id", referencedColumnName = "usuarioId", nullable = false)
     private Usuario arrendador;
 
     private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
-    private String tipo_de_ingreso;
+    private String tipoDeIngreso;
     private String descripcion;
     private int cantBanos;
     private int cantHabitaciones;
@@ -40,7 +40,7 @@ public class Propiedad {
     private boolean asador;
     private int valorNoche;
     private boolean visible;
-    private int calificacion;
+    private float promedioCalificacion;
 
     // Enum para el estado de la propiedad
     @Enumerated(EnumType.STRING)

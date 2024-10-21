@@ -6,8 +6,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class PagoDTO {
-    private long pago_id;
-    private SolicitudDTO solicitud_id;
+    private long pagoId;
+    private SolicitudDTO solicitudId;
     private int monto;
-    private LocalDate fecha_pago;
+    private LocalDate fechaPago;
 }

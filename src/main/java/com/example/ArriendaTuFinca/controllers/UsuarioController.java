@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.ArriendaTuFinca.DTOs.LoginDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,22 +39,26 @@ public class UsuarioController {
             String correo = loginRequest.getCorreo();
             String contrasenia = loginRequest.getContrasenia();
 
-            // Autenticar al usuario
+            // Autenticar al usuario usando el servicio
             UsuarioDTO usuarioAutenticado = usuarioService.autenticarUsuario(correo, contrasenia);
-            if (usuarioAutenticado != null) {
-                return ResponseEntity.ok(usuarioAutenticado);  // Usuario autenticado con éxito
-            } else {
-                return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
-            }
+            System.out.println("Id de usuario: "+usuarioAutenticado.getUsuarioId());
+
+            // Si la autenticación es exitosa, devolvemos el objeto UsuarioDTO
+            return ResponseEntity.ok(usuarioAutenticado);
+
         } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("autenticar su cuenta")) {
-                return ResponseEntity.status(403).body(e.getMessage()); // Usuario no autenticado
+            // Si ocurre un error, devolver una respuesta adecuada
+            String errorMessage = e.getMessage();
+
+            if (errorMessage.contains("autenticar su cuenta")) {
+                // Usuario no autenticado porque no ha verificado su correo
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
             } else {
-                return ResponseEntity.status(401).body(e.getMessage()); // Credenciales incorrectas
+                // Credenciales incorrectas
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
             }
         }
     }
-
 
 
     // Validar

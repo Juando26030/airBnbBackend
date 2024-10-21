@@ -35,18 +35,21 @@ import lombok.Setter;
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long solicitud_id;
+    private Long solicitudId;
 
     @ManyToOne
-    @JoinColumn(name = "arrendatario_id", referencedColumnName = "usuario_id", unique = false, nullable = false) 
-    private Usuario arrendatario_id;
+    @JoinColumn(name = "arrendatario_id", referencedColumnName = "usuarioId", unique = false, nullable = false)
+    private Usuario arrendatarioId;
 
     @ManyToOne //raro
-    @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedad_id", unique = false, nullable = false) 
-    private Propiedad propiedad_id;
+    @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedadId", unique = false, nullable = false)
+    private Propiedad propiedadId;
 
-    private LocalDate fecha_inicio;
-    private LocalDate fecha_fin;
-    private int precio_por_noche;
+    @OneToMany(mappedBy = "solicitud")
+    private List<Calificacion> calificaciones = new ArrayList<>();
+
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private int precioPorNoche;
     
 }

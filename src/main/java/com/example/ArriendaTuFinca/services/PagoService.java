@@ -55,15 +55,15 @@ public class PagoService {
     public PagoDTO crearPago(PagoDTO pagoDTO) {
         Pago pago = modelMapper.map(pagoDTO, Pago.class);
 
-        SolicitudDTO solicitudDTO = pagoDTO.getSolicitud_id(); //Obtengo el objeto con id
-        long solicitud_id = solicitudDTO.getSolicitud_id();    //Obtengo el id de la solicitud
+        SolicitudDTO solicitudDTO = pagoDTO.getSolicitudId(); //Obtengo el objeto con id
+        long solicitud_id = solicitudDTO.getSolicitudId();    //Obtengo el id de la solicitud
 
         Optional<Solicitud> solicitud = solicitudRepository.findById(solicitud_id); //Busco en bdd
 
         if (solicitud.isPresent()) {
-            pago.setSolicitud_id(solicitud.get());  //guardo el objeto
+            pago.setSolicitudId(solicitud.get());  //guardo el objeto
             pago = pagoRepository.save(pago);       //guardo el pago
-            pagoDTO.setPago_id(pago.getPago_id());  //retorno el DTO
+            pagoDTO.setPagoId(pago.getPago_id());  //retorno el DTO
             return pagoDTO;
         }
         
@@ -74,15 +74,15 @@ public class PagoService {
     public PagoDTO actualizarPago(PagoDTO pagoDTO) {
         Pago pago = modelMapper.map(pagoDTO, Pago.class);
 
-        SolicitudDTO solicitudDTO = pagoDTO.getSolicitud_id();
-        long solicitud_id = solicitudDTO.getSolicitud_id();
+        SolicitudDTO solicitudDTO = pagoDTO.getSolicitudId();
+        long solicitud_id = solicitudDTO.getSolicitudId();
 
         Optional<Solicitud> solicitud = solicitudRepository.findById(solicitud_id);
 
         if (solicitud.isPresent()) {
-            pago.setSolicitud_id(solicitud.get());
+            pago.setSolicitudId(solicitud.get());
             pago = pagoRepository.save(pago);
-            pagoDTO.setPago_id(pago.getPago_id());
+            pagoDTO.setPagoId(pago.getPago_id());
             return pagoDTO;
         }
         
