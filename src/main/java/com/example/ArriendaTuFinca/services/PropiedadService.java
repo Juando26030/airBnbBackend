@@ -72,26 +72,13 @@ public class PropiedadService {
     }    
         */
 
-    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO, Long arrendadorId) {
+    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
         // Mapea el DTO a la entidad (model Mapper)
         Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
-        propiedad.setEstado(ACTIVO);
-
-        propiedadDTO.setArrendadorId(arrendadorId);
-
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
-        if (usuarioOptional.isPresent()) {
-            // Usar el usuario existente en lugar de crear uno nuevo
-            propiedad.setArrendador(usuarioOptional.get());    //trae todo el usu
-            propiedad = propiedadRepository.save(propiedad);   //guarda la propiedad (persistencia)
-
-            // Actualizar el DTO con el ID generado de la propiedad
-            propiedadDTO.setPropiedadId(propiedad.getPropiedadId());
-            return propiedadDTO;
-        }
-
-        // Manejar el caso en que el usuario no exista
-        throw new IllegalArgumentException("El arrendador con ID " + arrendadorId + " no existe.");
+        Optional<Usuario> arrendador = usuarioRepository.findById(propiedadDTO.getArrendadorId());
+        arrendador.ifPresent(propiedad::setArrendador);
+        propiedadRepository.save(propiedad);
+        return propiedadDTO;
     }
         
     //put

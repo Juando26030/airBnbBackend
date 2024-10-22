@@ -18,6 +18,7 @@ import com.example.ArriendaTuFinca.DTOs.PropiedadDTO;
 
 @RestController
 @RequestMapping("/api/propiedades")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PropiedadController {
 
     @Autowired
@@ -39,12 +40,15 @@ public class PropiedadController {
     }
 
     // Create
-    @PostMapping(value = "/crear/{arrendador_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/crear", produces = MediaType.APPLICATION_JSON_VALUE)
     public PropiedadDTO crearPropiedad(
-            @RequestBody PropiedadDTO propiedadDTO,
-            @PathVariable Long arrendador_id
+            @RequestBody PropiedadDTO propiedadDTO
     ) {
-        return propiedadService.crearPropiedad(propiedadDTO, arrendador_id);
+        System.out.println("Entro al controller de crear propiedad");
+        System.out.println("Nombre: " + propiedadDTO.getNombre());
+        System.out.println("Descripcion: " + propiedadDTO.getDescripcion());
+        System.out.println("Arrendador_id: " + propiedadDTO.getArrendadorId());
+        return propiedadService.crearPropiedad(propiedadDTO);
     }
 
     // Update
