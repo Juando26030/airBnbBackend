@@ -1,6 +1,7 @@
 package com.example.ArriendaTuFinca.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -149,5 +150,27 @@ public class UsuarioService {
     public void eliminarUsuarioPorId(Long id) {
         usuarioRepository.deleteById(id);
     }
+
+    //Metodo para obtener tipo de usuario
+    public boolean obtenerTipoUsuario(Long id) {
+        System.out.println("entra servicio tipo usuario");
+        Optional<Usuario> usuario = usuarioRepository.findByUsuarioId(id);
+
+        // Si el usuario no está presente, lanzamos excepción
+        if (usuario.isEmpty()) {
+            throw new IllegalArgumentException("El usuario no existe.");
+        }
+
+        // Verificamos si el usuario es arrendador
+        System.out.println("usuario: " + usuario.get().getUsuarioId());
+        if (Objects.equals(usuario.get().getRol(), "arrendador")) {
+            System.out.println("es arrendador true");
+            return true;
+        } else {
+            System.out.println("es arrendatario false");
+            return false;  // Cambiamos a false en lugar de lanzar excepción
+        }
+    }
+
 
 }

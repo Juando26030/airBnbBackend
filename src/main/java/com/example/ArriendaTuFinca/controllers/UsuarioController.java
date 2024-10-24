@@ -16,6 +16,7 @@ import com.example.ArriendaTuFinca.services.UsuarioService;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping( value = "/api/usuarios")
 public class UsuarioController {
 
@@ -86,6 +87,19 @@ public class UsuarioController {
         try {
             UsuarioDTO usuario = usuarioService.activarUsuario(id);
             return ResponseEntity.ok("Usuario activado exitosamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping("/tipo-usuario/{id}")
+    public ResponseEntity<?> esArrendador(@PathVariable Long id) {
+        try {
+            System.out.println("entra endpoint tipo usuario");
+            boolean esArrendador = usuarioService.obtenerTipoUsuario(id);
+            System.out.println("en endppoint tipo usuario: "+esArrendador);
+            return ResponseEntity.ok(esArrendador);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
