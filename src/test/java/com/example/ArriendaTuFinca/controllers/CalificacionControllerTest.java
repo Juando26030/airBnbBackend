@@ -39,7 +39,8 @@ class CalificacionControllerTest {
         List<CalificacionDTO> calificaciones = new ArrayList<>();
         when(calificacionService.get()).thenReturn(calificaciones);
 
-        mockMvc.perform(get("/api/calificaciones")
+        mockMvc
+        .perform(get("/api/calificaciones")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));

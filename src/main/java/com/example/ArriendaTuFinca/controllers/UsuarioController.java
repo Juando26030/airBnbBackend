@@ -2,6 +2,7 @@ package com.example.ArriendaTuFinca.controllers;
 
 import java.util.List;
 
+import com.example.ArriendaTuFinca.DTOs.LoginDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,13 @@ public class UsuarioController {
     // Endpoint para manejar el login
     @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String correo, @RequestParam String contrasenia) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginRequest) {
         try {
+            // Extraer los parámetros del cuerpo del JSON
+            String correo = loginRequest.getCorreo();
+            String contrasenia = loginRequest.getContrasenia();
+
+            // Autenticar al usuario
             UsuarioDTO usuarioAutenticado = usuarioService.autenticarUsuario(correo, contrasenia);
             if (usuarioAutenticado != null) {
                 return ResponseEntity.ok(usuarioAutenticado);  // Usuario autenticado con éxito
@@ -40,7 +46,6 @@ public class UsuarioController {
                 return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
             }
         } catch (IllegalArgumentException e) {
-            // Si el mensaje es sobre la autenticación, devolvemos 403 (Forbidden)
             if (e.getMessage().contains("autenticar su cuenta")) {
                 return ResponseEntity.status(403).body(e.getMessage()); // Usuario no autenticado
             } else {
@@ -48,6 +53,7 @@ public class UsuarioController {
             }
         }
     }
+
 
 
     // Validar
