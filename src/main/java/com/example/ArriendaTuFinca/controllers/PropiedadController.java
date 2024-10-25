@@ -39,18 +39,21 @@ public class PropiedadController {
     }
 
     // Create
+    @CrossOrigin
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PropiedadDTO crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
         return propiedadService.crearPropiedad(propiedadDTO);
     }
 
     // Update
+    @CrossOrigin
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public PropiedadDTO actualizarPropiedad(@PathVariable Long id, @RequestBody PropiedadDTO propiedadDTO) {
         return propiedadService.actualizarPropiedad(id, propiedadDTO);
     }
 
     // Delete
+    @CrossOrigin
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void eliminarPropiedad(@PathVariable Long id) {
         propiedadService.eliminarPropiedad(id);

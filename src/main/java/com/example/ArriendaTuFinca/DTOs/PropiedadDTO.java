@@ -3,6 +3,9 @@ package com.example.ArriendaTuFinca.DTOs;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class PropiedadDTO {
@@ -16,7 +19,7 @@ public class PropiedadDTO {
     private String descripcion;
     private int cant_banos;
     private int cant_habitaciones;
-    private int cantPersonas;
+    private int cant_personas;
     private boolean mascotas;
     private boolean piscina;
     private boolean asador;
@@ -24,4 +27,6 @@ public class PropiedadDTO {
     private boolean visible;
     private int calificacion;
     private String estado;
+    // Lista de imágenes
+    private List<ImagenDTO> imagenes;
 }
