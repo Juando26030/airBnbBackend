@@ -41,15 +41,14 @@ public class PropiedadController {
 
     // Create
     @PostMapping(value = "/crear", produces = MediaType.APPLICATION_JSON_VALUE)
-    public PropiedadDTO crearPropiedad(
-            @RequestBody PropiedadDTO propiedadDTO
-    ) {
+    public PropiedadDTO crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
         System.out.println("Entro al controller de crear propiedad");
         System.out.println("Nombre: " + propiedadDTO.getNombre());
         System.out.println("Descripcion: " + propiedadDTO.getDescripcion());
         System.out.println("Arrendador_id: " + propiedadDTO.getArrendadorId());
         return propiedadService.crearPropiedad(propiedadDTO);
     }
+
 
     // Update
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
