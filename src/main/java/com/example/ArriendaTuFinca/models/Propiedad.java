@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Propiedad")
@@ -26,7 +28,6 @@ public class Propiedad {
     @JoinColumn(name = "arrendador_id", referencedColumnName = "usuarioId", nullable = false)
     private Usuario arrendador;
 
-    private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
@@ -42,11 +43,15 @@ public class Propiedad {
     private boolean visible;
     private float promedioCalificacion;
 
-    // Enum para el estado de la propiedad
     @Enumerated(EnumType.STRING)
     private Estado estado;
+
+    // Relación con ImagenPropiedad
+    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenPropiedad> imagenes = new ArrayList<>();
 
     public enum Estado {
         ACTIVO, INACTIVO
     }
 }
+

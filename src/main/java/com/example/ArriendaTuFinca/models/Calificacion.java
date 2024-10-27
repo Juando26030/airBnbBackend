@@ -6,6 +6,7 @@ package com.example.ArriendaTuFinca.models;
 //import java.util.List;
 //import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 import jakarta.persistence.Entity;
@@ -38,5 +39,5 @@ public class Calificacion {
     private int calificacionPropiedad;
     private int calificacionArrendatario;
     private String comentario;
-    private LocalDate fechaCalificacion;
+    private Date fechaCalificacion;
 }

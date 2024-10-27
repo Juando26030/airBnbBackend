@@ -1,15 +1,5 @@
 package com.example.ArriendaTuFinca.models;
 
-//import java.util.Arrays;
-//import java.util.Optional;
-//import java.util.stream.Collectors;
-//import java.util.List;
-//import java.util.ArrayList;
-import java.time.LocalDate;
-import java.util.Date;
-
-import com.example.ArriendaTuFinca.DTOs.SolicitudDTO;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,20 +13,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Pago")
+@Table(name = "ImagenPropiedad")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pago {
+public class ImagenPropiedad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pagoId;
+    private Long imagenId;
+
+    private String url; // URL de la imagen
 
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitudId", unique = false, nullable = false)
-    private Solicitud solicitudId;
-
-    private int monto;
-    private Date fechaPago;
+    @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedadId", nullable = false)
+    private Propiedad propiedad;
 }

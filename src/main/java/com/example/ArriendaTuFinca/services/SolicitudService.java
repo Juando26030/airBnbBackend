@@ -1,9 +1,14 @@
 package com.example.ArriendaTuFinca.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.List;
 
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,30 +59,57 @@ public class SolicitudService {
         return solicitudDTO;
     }
 
-    //post
-    //ese problema que
     public SolicitudDTO crearSolicitud(SolicitudDTO solicitudDTO) {
+        UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatario();
+        long arrendatarioId = arrendatarioDTO.getUsuarioId();
+
+        PropiedadDTO propiedadDTO = solicitudDTO.getPropiedad();
+        long propiedadId = propiedadDTO.getPropiedadId();
+
+        Optional<Usuario> arrendatario = usuarioRepository.findById(arrendatarioId);
+        Optional<Propiedad> propiedad = propiedadRepository.findById(propiedadId);
+
+        // Configurar un convertidor para fechas en formato ISO
+        ModelMapper modelMapper = new ModelMapper();
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        // Convertidor de String a Date
+        Converter<String, Date> toDate = ctx -> {
+            try {
+                return ctx.getSource() == null ? null : isoFormat.parse(ctx.getSource());
+            } catch (ParseException e) {
+                throw new RuntimeException("Error al parsear la fecha: " + ctx.getSource(), e);
+            }
+        };
+
+        // Convertidor de Date a String
+        Converter<Date, String> toString = ctx -> ctx.getSource() == null ? null : isoFormat.format(ctx.getSource());
+
+        // Agregar convertidores al modelMapper
+        modelMapper.typeMap(SolicitudDTO.class, Solicitud.class)
+                .addMappings(mapper -> {
+                    mapper.using(toDate).map(SolicitudDTO::getFechaInicio, Solicitud::setFechaInicio);
+                    mapper.using(toDate).map(SolicitudDTO::getFechaFin, Solicitud::setFechaFin);
+                });
+
+        modelMapper.typeMap(Solicitud.class, SolicitudDTO.class)
+                .addMappings(mapper -> {
+                    mapper.using(toString).map(Solicitud::getFechaInicio, SolicitudDTO::setFechaInicio);
+                    mapper.using(toString).map(Solicitud::getFechaFin, SolicitudDTO::setFechaFin);
+                });
+
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
 
-        UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatarioId();
-        long arrendatario_id = arrendatarioDTO.getUsuarioId();
+        if (arrendatario.isPresent() && propiedad.isPresent()) {
+            solicitud.setArrendatario(arrendatario.get());
+            solicitud.setPropiedad(propiedad.get());
 
-        PropiedadDTO propiedadDTO = solicitudDTO.getPropiedadId();
-        long propiedad_id = propiedadDTO.getPropiedadId();
-
-        Optional<Usuario> arrendatarioOptional = usuarioRepository.findById(arrendatario_id);
-        Optional<Propiedad> propiedadOptional = propiedadRepository.findById(propiedad_id);
-
-        if (arrendatarioOptional.isPresent() && propiedadOptional.isPresent()) {
-            solicitud.getArrendatarioId().setUsuarioId(arrendatarioOptional.get().getUsuarioId());
-            solicitud.getPropiedadId().setPropiedadId(propiedadOptional.get().getPropiedadId());
-            solicitud = solicitudRepository.save(solicitud);
-            solicitudDTO.setSolicitudId(solicitud.getSolicitudId());
-            return solicitudDTO;
+            solicitudRepository.save(solicitud);
+            return modelMapper.map(solicitud, SolicitudDTO.class);
         }
 
         throw new RuntimeException("No se pudo crear la solicitud");
-
     }
 
     //put

@@ -3,12 +3,15 @@ package com.example.ArriendaTuFinca.DTOs;
 import lombok.Getter;
 import lombok.Setter;
 
+import lombok.Getter;
+import lombok.Setter;
+import java.util.List;
+
 @Getter
 @Setter
 public class PropiedadDTO {
     private Long propiedadId;
     private Long arrendadorId;
-    private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
@@ -24,4 +27,6 @@ public class PropiedadDTO {
     private boolean visible;
     private float calificacion;
     private String estado;
+
+    private List<String> imagenes; // Lista de URLs de imágenes
 }

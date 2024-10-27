@@ -63,7 +63,7 @@ public class PagoService {
         if (solicitud.isPresent()) {
             pago.setSolicitudId(solicitud.get());  //guardo el objeto
             pago = pagoRepository.save(pago);       //guardo el pago
-            pagoDTO.setPagoId(pago.getPago_id());  //retorno el DTO
+            pagoDTO.setPagoId(pago.getPagoId());  //retorno el DTO
             return pagoDTO;
         }
         
@@ -82,7 +82,7 @@ public class PagoService {
         if (solicitud.isPresent()) {
             pago.setSolicitudId(solicitud.get());
             pago = pagoRepository.save(pago);
-            pagoDTO.setPagoId(pago.getPago_id());
+            pagoDTO.setPagoId(pago.getPagoId());
             return pagoDTO;
         }
         

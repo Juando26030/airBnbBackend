@@ -1,10 +1,7 @@
 package com.example.ArriendaTuFinca.models;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDate;
 
 import org.hibernate.annotations.SQLDelete;
@@ -26,6 +23,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.util.Date;
+
 @Entity
 @Table(name = "Solicitud")
 @Getter
@@ -39,17 +38,15 @@ public class Solicitud {
 
     @ManyToOne
     @JoinColumn(name = "arrendatario_id", referencedColumnName = "usuarioId", unique = false, nullable = false)
-    private Usuario arrendatarioId;
+    private Usuario arrendatario;
 
-    @ManyToOne //raro
+    @ManyToOne
     @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedadId", unique = false, nullable = false)
-    private Propiedad propiedadId;
+    private Propiedad propiedad;
 
     @OneToMany(mappedBy = "solicitud")
     private List<Calificacion> calificaciones = new ArrayList<>();
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private int precioPorNoche;
-    
+    private Date fechaInicio; // Cambiado de LocalDate a Date
+    private Date fechaFin;    // Cambiado de LocalDate a Date
 }
