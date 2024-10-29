@@ -40,26 +40,22 @@ public class UsuarioController {
             String correo = loginRequest.getCorreo();
             String contrasenia = loginRequest.getContrasenia();
 
-            // Autenticar al usuario usando el servicio
+            // Autenticar al usuario
             UsuarioDTO usuarioAutenticado = usuarioService.autenticarUsuario(correo, contrasenia);
-            System.out.println("Id de usuario: "+usuarioAutenticado.getUsuarioId());
-
-            // Si la autenticación es exitosa, devolvemos el objeto UsuarioDTO
-            return ResponseEntity.ok(usuarioAutenticado);
-
-        } catch (IllegalArgumentException e) {
-            // Si ocurre un error, devolver una respuesta adecuada
-            String errorMessage = e.getMessage();
-
-            if (errorMessage.contains("autenticar su cuenta")) {
-                // Usuario no autenticado porque no ha verificado su correo
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage);
+            if (usuarioAutenticado != null) {
+                return ResponseEntity.ok(usuarioAutenticado);  // Usuario autenticado con éxito
             } else {
-                // Credenciales incorrectas
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+                return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
+            }
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("autenticar su cuenta")) {
+                return ResponseEntity.status(403).body(e.getMessage()); // Usuario no autenticado
+            } else {
+                return ResponseEntity.status(401).body(e.getMessage()); // Credenciales incorrectas
             }
         }
     }
+
 
 
     // Validar
@@ -67,6 +63,13 @@ public class UsuarioController {
     @GetMapping( value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UsuarioDTO obtenerUsuarioPorId(@PathVariable Long id) {
         return usuarioService.obtenerUsuarioPorId(id);
+    }
+
+    //Get tipo usuario
+    @CrossOrigin
+    @GetMapping( value = "/tipo-usuario/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean obtenerTipoUsuario(@PathVariable Long usuarioId) {
+        return usuarioService.obtenerTipoUsuario(usuarioId);
     }
 
     // Create
@@ -87,19 +90,6 @@ public class UsuarioController {
         try {
             UsuarioDTO usuario = usuarioService.activarUsuario(id);
             return ResponseEntity.ok("Usuario activado exitosamente");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
-    @CrossOrigin
-    @GetMapping("/tipo-usuario/{id}")
-    public ResponseEntity<?> esArrendador(@PathVariable Long id) {
-        try {
-            System.out.println("entra endpoint tipo usuario");
-            boolean esArrendador = usuarioService.obtenerTipoUsuario(id);
-            System.out.println("en endppoint tipo usuario: "+esArrendador);
-            return ResponseEntity.ok(esArrendador);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
