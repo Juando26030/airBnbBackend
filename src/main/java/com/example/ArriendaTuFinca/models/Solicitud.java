@@ -49,4 +49,5 @@ public class Solicitud {
 
     private Date fechaInicio; // Cambiado de LocalDate a Date
     private Date fechaFin;    // Cambiado de LocalDate a Date
+    private int huespedes;
 }

@@ -15,6 +15,7 @@ public class SolicitudDTO {
     private Long solicitudId;
     private UsuarioDTO arrendatario;
     private PropiedadDTO propiedad;
+    private int huespedes;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private Date fechaInicio;
