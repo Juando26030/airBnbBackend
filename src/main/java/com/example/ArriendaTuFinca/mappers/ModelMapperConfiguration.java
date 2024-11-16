@@ -1,11 +1,13 @@
 package com.example.ArriendaTuFinca.mappers;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,13 @@ public class ModelMapperConfiguration {
     }
 
 
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        return objectMapper;
+    }
 
 
     /* 
