@@ -1,5 +1,6 @@
 package com.example.ArriendaTuFinca.DTOs;
 
+import com.example.ArriendaTuFinca.models.Rol;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ public class UsuarioDTO {
     private String telefono;
     private String contrasenia;
     private String confirmarContrasenia; // Campo de confirmación de contraseña
-    private String rol; // Tipo de usuario
+    private Rol rol; // Tipo de usuario
     private String estado;
     private Boolean autenticado; // Indica si el usuario está autenticado
 }

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
 import com.example.ArriendaTuFinca.services.UsuarioService;
 
@@ -23,6 +23,9 @@ public class UsuarioController {
     // Inyección de dependencias
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // CRUD Endpoints
     @CrossOrigin
@@ -76,6 +79,7 @@ public class UsuarioController {
     @CrossOrigin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        usuarioDTO.setContrasenia(passwordEncoder.encode(usuarioDTO.getContrasenia())); // Encriptar la contraseña
         try {
             UsuarioDTO nuevoUsuario = usuarioService.crearUsuario(usuarioDTO);
             return ResponseEntity.ok(nuevoUsuario);  // Devuelve el nuevo usuario creado

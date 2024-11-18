@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
@@ -32,6 +35,19 @@ public class UsuarioService {
 
     @Value("${spring.mail.username}")
     private String fromEmail;
+
+    //User details service
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) {
+                return usuarioRepository.findByCorreo(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            }
+        };
+    }
+
+
 
     // Método para autenticar un usuario por correo y contraseña
     public UsuarioDTO autenticarUsuario(String correo, String contrasenia) {
@@ -87,6 +103,7 @@ public class UsuarioService {
         // Validaciones de correo y contraseña
 
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
+        //usuario.setContrasenia(passwordEncoder.encode(usuarioDTO.getContrasenia())); // Encriptar la contraseña
         usuario = usuarioRepository.save(usuario);
 
         usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
