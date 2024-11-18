@@ -30,30 +30,29 @@ public class AuthenticationService {
 
 
     public LoginResponseDTO login(String correo, String contrasenia) {
-        System.out.println("Entra a servicio login");
         Optional<Usuario> usuario = usuarioRepository.findByCorreo(correo);
 
         if (usuario.isEmpty()) {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
-        System.out.println("Usuario encontrado");
-        System.out.println(usuario.get().getCorreo());
-        System.out.println(usuario.get().getContrasenia());
 
-        // Validar la contraseña
         if (!passwordEncoder.matches(contrasenia, usuario.get().getContrasenia())) {
-            System.out.println("Contraseña incorrecta");
             throw new BadCredentialsException("Credenciales inválidas");
         }
-        System.out.println("Contraseña correcta");
-        // Si la validación pasa, autentica con el AuthenticationManager
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(correo, contrasenia)
         );
 
         String token = jwtService.generateToken(usuario.get());
-        return new LoginResponseDTO(token, correo, usuario.get().getRol().getTipoRol());
+        return new LoginResponseDTO(
+                token,
+                correo,
+                usuario.get().getRol().getTipoRol(),
+                usuario.get().getUsuarioId() // Incluimos el ID del usuario
+        );
     }
+
 
 
     public LoginResponseDTO refresh(String token) {
@@ -67,7 +66,7 @@ public class AuthenticationService {
 
         token = jwtService.generateToken(usuario.get());
 
-        return new LoginResponseDTO(token, username, usuario.get().getRol().getTipoRol());
+        return new LoginResponseDTO(token, username, usuario.get().getRol().getTipoRol(), usuario.get().getUsuarioId());
     }
 
 }

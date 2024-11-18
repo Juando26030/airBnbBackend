@@ -8,4 +8,5 @@ public class LoginResponseDTO {
     private String accessToken;
     private String correo;
     private String rol;
+    private Long usuarioId;
 }

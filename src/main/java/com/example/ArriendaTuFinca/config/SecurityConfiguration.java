@@ -47,14 +47,24 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/autenticacion/refresh/**")
-                            .authenticated()
-                        .requestMatchers("/autenticacion/**")
-                            .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios")
                             .permitAll()
+
+                        .requestMatchers("/api/usuarios/autenticar")
+                            .permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/activar")
+                            .permitAll()
+
+                        .requestMatchers("/autenticacion/refresh/**")
+                            .authenticated()
+
+                        .requestMatchers("/autenticacion/**")
+                            .permitAll()
+
                         .requestMatchers("/api/usuarios/**")
                             .authenticated()
+
                         .anyRequest()
                             .authenticated())
                 .exceptionHandling(exception -> exception
