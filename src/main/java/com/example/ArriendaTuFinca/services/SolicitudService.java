@@ -69,13 +69,21 @@ public class SolicitudService {
         Propiedad propiedad = propiedadRepository.findById(propiedadId)
                 .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada"));
 
+        // Mapea el DTO a la entidad
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
         solicitud.setArrendatario(arrendatario);
         solicitud.setPropiedad(propiedad);
 
-        solicitudRepository.save(solicitud);
+        // Guarda la solicitud en la base de datos
+        solicitud = solicitudRepository.save(solicitud);
+
+        // Verifica el ID generado
+        System.out.println("ID generado: " + solicitud.getSolicitudId());
+
+        // Mapea la entidad actualizada al DTO y devuelve
         return modelMapper.map(solicitud, SolicitudDTO.class);
     }
+
 
 
     //put

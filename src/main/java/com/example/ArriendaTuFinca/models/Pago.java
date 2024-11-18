@@ -35,8 +35,12 @@ public class Pago {
 
     @ManyToOne
     @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitudId", unique = false, nullable = false)
-    private Solicitud solicitudId;
+    private Solicitud solicitud;
 
     private int monto;
     private Date fechaPago;
+
+    private long cardNumber;
+    private int cvv;
+    private Date expDate;
 }
