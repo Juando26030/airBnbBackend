@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.ArriendaTuFinca.models.Rol;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -170,24 +171,30 @@ public class UsuarioService {
 
     //Metodo para obtener tipo de usuario
     public boolean obtenerTipoUsuario(Long id) {
-        System.out.println("entra servicio tipo usuario");
-        Optional<Usuario> usuario = usuarioRepository.findByUsuarioId(id);
+        System.out.println("Entra al servicio para verificar tipo de usuario");
 
-        // Si el usuario no está presente, lanzamos excepción
-        if (usuario.isEmpty()) {
+        // Buscamos al usuario en la base de datos
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+
+        // Si el usuario no existe, lanzamos una excepción
+        if (optionalUsuario.isEmpty()) {
             throw new IllegalArgumentException("El usuario no existe.");
         }
 
-        // Verificamos si el usuario es arrendador
-        System.out.println("usuario: " + usuario.get().getUsuarioId());
-        if (Objects.equals(usuario.get().getRol(), "arrendador")) {
-            System.out.println("es arrendador true");
+        Usuario usuario = optionalUsuario.get();
+        Rol rol = usuario.getRol();
+
+        System.out.println("Usuario ID: " + usuario.getUsuarioId());
+        System.out.println("Rol tipo: " + rol.getTipoRol());
+        System.out.println("Rol ID: " + rol.getId());
+
+        // Validamos si el rol corresponde a "USUARIO" y tiene ID 2
+        if (rol.getId() == 2 && "USUARIO".equalsIgnoreCase(rol.getTipoRol())) {
+            System.out.println("Es USUARIO con ID 2: true");
             return true;
-        } else {
-            System.out.println("es arrendatario false");
-            return false;  // Cambiamos a false en lugar de lanzar excepción
         }
+
+        System.out.println("No es ADMIN con ID 1: false");
+        return false;
     }
-
-
 }
