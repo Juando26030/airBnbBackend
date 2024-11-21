@@ -9,10 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "Propiedad")
@@ -23,30 +22,36 @@ import java.util.Set;
 public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long propiedad_id;
+    private Long propiedadId;
 
     @ManyToOne
-    @JoinColumn(name = "arrendador_id", referencedColumnName = "usuario_id", unique = false, nullable = false)  //arrendador_id es el nombre de la columna en la tabla Propiedad
-    private Usuario arrendador_id;
+    @JoinColumn(name = "arrendador_id", referencedColumnName = "usuarioId", nullable = false)
+    private Usuario arrendador;
 
-    private String imagen;
     private String nombre;
     private String departamento;
     private String municipio;
-    private String tipo_de_ingreso;
+    private String tipoDeIngreso;
     private String descripcion;
-    private int cant_banos;
-    private int cant_habitaciones;
-    private int cantPersonas;   //y al otro lado que??????
+    private int cantBanos;
+    private int cantHabitaciones;
+    private int cantPersonas;
     private boolean mascotas;
     private boolean piscina;
     private boolean asador;
-    private int valor_noche;
+    private int valorNoche;
     private boolean visible;
-    private int calificacion;
-    Estado estado;
+    private float promedioCalificacion;
 
-    // Relación con la tabla Imagen
-    @OneToMany(mappedBy = "propiedad") //, cascade = CascadeType.ALL, orphanRemoval = true
-    private List<Imagen> imagenes = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Estado estado;
+
+    // Relación con ImagenPropiedad
+    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenPropiedad> imagenes = new ArrayList<>();
+
+    public enum Estado {
+        ACTIVO, INACTIVO
+    }
 }
+

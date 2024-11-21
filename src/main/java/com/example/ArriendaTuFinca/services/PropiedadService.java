@@ -1,23 +1,22 @@
 package com.example.ArriendaTuFinca.services;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.List;
 
-import com.example.ArriendaTuFinca.models.Imagen;
-import org.hibernate.internal.util.collections.ConcurrentReferenceHashMap.Option;
+import com.example.ArriendaTuFinca.models.ImagenPropiedad;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.repository.PropiedadRepository;
 import com.example.ArriendaTuFinca.repository.UsuarioRepository;
-import com.example.ArriendaTuFinca.repository.ImagenRepository;
-import com.example.ArriendaTuFinca.models.Estado;
 import com.example.ArriendaTuFinca.models.Propiedad;
 import com.example.ArriendaTuFinca.models.Usuario;
 import com.example.ArriendaTuFinca.DTOs.PropiedadDTO;
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
-import com.example.ArriendaTuFinca.DTOs.ImagenDTO;
+
+import static com.example.ArriendaTuFinca.models.Propiedad.Estado.ACTIVO;
 
 
 @Service
@@ -28,9 +27,6 @@ public class PropiedadService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private ImagenRepository imagenRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,12 +44,20 @@ public class PropiedadService {
 
     //get por id
     public PropiedadDTO obtenerPropiedadPorId(Long id) {
-        Optional<Propiedad> propiedad = propiedadRepository.findById(id); //Optional es un contenedor que puede o no contener un valor no nulo
-        PropiedadDTO propiedadDTO = null;
+        Optional<Propiedad> propiedad = propiedadRepository.findById(id);
         if (propiedad.isPresent()) {
-            propiedadDTO = modelMapper.map(propiedad.get(), PropiedadDTO.class);
+            // Mapeo de la entidad a DTO
+            PropiedadDTO propiedadDTO = modelMapper.map(propiedad.get(), PropiedadDTO.class);
+
+            // Mapear URLs de imágenes manualmente
+            List<String> imagenUrls = propiedad.get().getImagenes().stream()
+                    .map(ImagenPropiedad::getUrl)
+                    .collect(Collectors.toList());
+            propiedadDTO.setImagenes(imagenUrls);
+
+            return propiedadDTO;
         }
-        return propiedadDTO;
+        return null;
     }
 
     //post
@@ -77,163 +81,39 @@ public class PropiedadService {
     }    
         */
 
-//    public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
-//        // Mapea el DTO a la entidad (model Mapper)
-//        Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
-//        propiedad.setEstado(Estado.ACTIVE);
-//
-//        // Obtener el objeto UsuarioDTO del DTO de Propiedad
-//        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendador_id();
-//        Long arrendadorId = arrendadorDTO.getUsuario_id();
-//
-//        Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId); //del repo de Usu
-//        if (usuarioOptional.isPresent()) {
-//            // Usar el usuario existente en lugar de crear uno nuevo
-//            propiedad.setArrendador_id(usuarioOptional.get());    //trae todo el usu
-//
-//            // Actualizar el DTO con el ID generado de la propiedad
-//            propiedadDTO.setPropiedad_id(propiedad.getPropiedad_id());
-//            return propiedadDTO;
-//        }
-//
-//        // Manejar el caso en que el usuario no exista
-//        throw new IllegalArgumentException("El arrendador con ID " + arrendadorId + " no existe.");
-//    }
-
-
     public PropiedadDTO crearPropiedad(PropiedadDTO propiedadDTO) {
-        // Mapea el DTO a la entidad, excepto las imágenes
+        // Mapear el DTO a la entidad Propiedad
         Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
-        propiedad.setEstado(Estado.ACTIVE);
 
-        // Obtener el arrendador por su ID
-        UsuarioDTO arrendadorDTO = propiedadDTO.getArrendador_id();
-        Long arrendadorId = arrendadorDTO.getUsuario_id();
+        // Establecer el arrendador si existe
+        Optional<Usuario> arrendador = usuarioRepository.findById(propiedadDTO.getArrendadorId());
+        arrendador.ifPresent(propiedad::setArrendador);
 
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(arrendadorId);
-        if (!usuarioOptional.isPresent()) {
-            throw new IllegalArgumentException("El arrendador con ID " + arrendadorId + " no existe.");
+        // Procesar las URLs de imágenes y asignarlas a la propiedad
+        if (propiedadDTO.getImagenes() != null) {
+            Propiedad finalPropiedad = propiedad;
+            List<ImagenPropiedad> imagenes = propiedadDTO.getImagenes().stream()
+                    .map(url -> new ImagenPropiedad(null, url, finalPropiedad)) // Crear la entidad ImagenPropiedad
+                    .collect(Collectors.toList());
+            propiedad.setImagenes(imagenes); // Asignar las imágenes a la propiedad
         }
 
-        propiedad.setArrendador_id(usuarioOptional.get());
+        // Guardar la propiedad con sus imágenes en la base de datos
+        propiedad = propiedadRepository.save(propiedad);
 
-        // Manejar las imágenes manualmente
-        List<Imagen> imagenesActualizadas = new ArrayList<>();
-        for (ImagenDTO imagenDTO : propiedadDTO.getImagenes()) {
-            Optional<Imagen> imagenOptional = imagenRepository.findById(imagenDTO.getImagen_id());
-            if (imagenOptional.isPresent()) {
-                Imagen imagenExistente = imagenOptional.get();
-                imagenExistente.setPropiedad(propiedad); // Asignar la propiedad a la imagen
-                imagenesActualizadas.add(imagenExistente);
-            } else {
-                throw new IllegalArgumentException("La imagen con ID " + imagenDTO.getImagen_id() + " no existe.");
-            }
-        }
-
-        propiedad.setImagenes(imagenesActualizadas);  // Asignar las imágenes actualizadas a la propiedad
-
-        // Guardar la propiedad
-        Propiedad nuevaPropiedad = propiedadRepository.save(propiedad);
-
-        // Mapear de vuelta a DTO
-        PropiedadDTO propiedadCreadaDTO = modelMapper.map(nuevaPropiedad, PropiedadDTO.class);
-        return propiedadCreadaDTO;
+        // Mapear la entidad guardada de vuelta al DTO y retornarlo
+        return modelMapper.map(propiedad, PropiedadDTO.class);
     }
-        
+
+
     //put
-    //lo que no llegue se pone null
-//    public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
-//        Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
-//        propiedad.setPropiedad_id(id);
-//        propiedadDTO = modelMapper.map(propiedadRepository.save(propiedad), PropiedadDTO.class);
-//        return propiedadDTO;
-//    }
-
-    public PropiedadDTO actualizarPropiedad(Long propiedadId, PropiedadDTO propiedadDTO) {
-        // Busca la propiedad en la base de datos
-        Optional<Propiedad> optionalPropiedad = propiedadRepository.findById(propiedadId);
-
-        if (optionalPropiedad.isPresent()) {
-            // Obtén la entidad propiedad existente
-            Propiedad propiedad = optionalPropiedad.get();
-
-            // Mapear los valores del DTO a la entidad
-            propiedad.setNombre(propiedadDTO.getNombre());
-            propiedad.setDepartamento(propiedadDTO.getDepartamento());
-            propiedad.setMunicipio(propiedadDTO.getMunicipio());
-            propiedad.setTipo_de_ingreso(propiedadDTO.getTipo_de_ingreso());
-            propiedad.setCant_banos(propiedadDTO.getCant_banos());
-            propiedad.setCant_habitaciones(propiedadDTO.getCant_habitaciones());
-            propiedad.setDescripcion(propiedadDTO.getDescripcion());
-            propiedad.setCantPersonas(propiedadDTO.getCant_personas());
-            propiedad.setMascotas(propiedadDTO.isMascotas());
-            propiedad.setPiscina(propiedadDTO.isPiscina());
-            propiedad.setAsador(propiedadDTO.isAsador());
-            propiedad.setValor_noche(propiedadDTO.getValor_noche());
-
-            //la calificaion se puede hacer en otro lado como para no actualizar todo
-
-            // Actualizar la lista de imágenes sin reemplazarla directamente
-            List<Imagen> imagenesActuales = propiedad.getImagenes();
-            List<ImagenDTO> nuevasImagenesDTO = propiedadDTO.getImagenes();
-
-            // Eliminar imágenes que ya no están en el DTO
-            imagenesActuales.removeIf(imagen -> nuevasImagenesDTO.stream()
-                    .noneMatch(imagenDTO -> imagenDTO.getImagen_id().equals(imagen.getImagen_id())));
-
-            // Agregar o actualizar las imágenes del DTO
-            for (ImagenDTO imagenDTO : nuevasImagenesDTO) {
-                Imagen imagen = imagenRepository.findById(imagenDTO.getImagen_id())
-                        .orElse(new Imagen()); // Si no existe, crea una nueva
-
-                imagen.setUrl(imagenDTO.getUrl());
-                imagen.setPropiedad(propiedad); // Asignar la propiedad a la imagen
-
-                // Si la imagen no está en la lista actual, agregarla
-                if (!imagenesActuales.contains(imagen)) {
-                    imagenesActuales.add(imagen);
-                }
-            }
-
-            // Guardar la propiedad actualizada
-            propiedadRepository.save(propiedad);
-
-            // Mapear la entidad actualizada de vuelta a un DTO
-            return mapPropiedadToDTO(propiedad);
-        } else {
-            // Si la propiedad no existe, devolver un DTO vacío o null
-            return null; // O puedes devolver un DTO vacío como nueva PropiedadDTO()
-        }
-    }
-
-    private PropiedadDTO mapPropiedadToDTO(Propiedad propiedad) {
-        PropiedadDTO propiedadDTO = new PropiedadDTO();
-
-        // Mapear los campos de la entidad a los campos del DTO
-        propiedadDTO.setPropiedad_id(propiedad.getPropiedad_id());
-        propiedadDTO.setNombre(propiedad.getNombre());
-        propiedadDTO.setDepartamento(propiedad.getDepartamento());
-        propiedadDTO.setMunicipio(propiedad.getMunicipio());
-        propiedadDTO.setCant_banos(propiedad.getCant_banos());
-        propiedadDTO.setCant_habitaciones(propiedad.getCant_habitaciones());
-        propiedadDTO.setValor_noche(propiedad.getValor_noche());
-        propiedadDTO.setDescripcion(propiedad.getDescripcion());
-
-        // Mapear las imágenes de la entidad a los DTOs de imágenes
-        List<ImagenDTO> imagenesDTO = new ArrayList<>();
-        for (Imagen imagen : propiedad.getImagenes()) {
-            ImagenDTO imagenDTO = new ImagenDTO();
-            imagenDTO.setImagen_id(imagen.getImagen_id());
-            imagenDTO.setUrl(imagen.getUrl());
-            imagenesDTO.add(imagenDTO);
-        }
-        propiedadDTO.setImagenes(imagenesDTO);
-
+    public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
+        Propiedad propiedad = modelMapper.map(propiedadDTO, Propiedad.class);
+        propiedad.setEstado(ACTIVO);
+        propiedad.setPropiedadId(id);
+        propiedadDTO = modelMapper.map(propiedadRepository.save(propiedad), PropiedadDTO.class);
         return propiedadDTO;
     }
-
-
-
 
     //delete por id
     public void eliminarPropiedad(Long id) {
@@ -241,44 +121,62 @@ public class PropiedadService {
     }
 
 
-    // Método que implementa la lógica de búsqueda por ubicación y/o cantidad de personas
-    // Método que implementa la lógica de búsqueda por departamento, municipio y/o cantidad de personas
-    public List<PropiedadDTO> buscarPropiedadesPorFiltros(String departamento, String municipio, Integer cantPersonas) {
-        List<Propiedad> propiedadesFiltradas;
+    // Método para buscar propiedades por el id del arrendador (admin) y mapear URLs de imágenes
+    public List<PropiedadDTO> buscarPropiedadesAdmin(Long id_admin) {
+        // Obtener propiedades asociadas al arrendador (admin)
+        List<Propiedad> propiedades = propiedadRepository.findByArrendador_UsuarioId(id_admin);
 
-        // Si están presentes todos los filtros
-        if (departamento != null && municipio != null && cantPersonas != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndMunicipioAndCantPersonas(departamento, municipio, cantPersonas);
-        }
-        // Si están presentes departamento y cantidad de personas (sin municipio)
-        else if (departamento != null && cantPersonas != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndCantPersonas(departamento, cantPersonas);
-        }
-        // Si están presentes departamento y municipio (sin cantidad de personas)
-        else if (departamento != null && municipio != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamentoAndMunicipio(departamento, municipio);
-        }
-        // Si solo está el departamento
-        else if (departamento != null) {
-            propiedadesFiltradas = propiedadRepository.findByDepartamento(departamento);
-        }
-        // Si solo está el municipio
-        else if (municipio != null) {
-            propiedadesFiltradas = propiedadRepository.findByMunicipio(municipio);
-        }
-        // Si solo está la cantidad de personas
-        else if (cantPersonas != null) {
-            propiedadesFiltradas = propiedadRepository.findByCantPersonas(cantPersonas);
-        }
-        // Si no se proporcionó ningún filtro, devolver todas las propiedades
-        else {
-            propiedadesFiltradas = propiedadRepository.findAll();
-        }
+        // Convertir entidades a DTOs y mapear URLs de imágenes
+        return propiedades.stream()
+                .map(propiedad -> {
+                    PropiedadDTO propiedadDTO = modelMapper.map(propiedad, PropiedadDTO.class);
 
-        // Convertir las entidades a DTOs y devolver
-        return propiedadesFiltradas.stream()
-                .map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))
+                    // Mapear URLs de las imágenes a la propiedad DTO
+                    List<String> imagenUrls = propiedad.getImagenes().stream()
+                            .map(ImagenPropiedad::getUrl)
+                            .collect(Collectors.toList());
+                    propiedadDTO.setImagenes(imagenUrls);
+
+                    return propiedadDTO;
+                })
                 .collect(Collectors.toList());
+    }
+
+    // Métodos adicionales
+    public List<PropiedadDTO> buscarPropiedadesPorFiltros(String departamento, String municipio, Integer cantPersonas) {
+        List<Propiedad> propiedadesFiltradas = obtenerPropiedadesFiltradas(departamento, municipio, cantPersonas);
+
+        return propiedadesFiltradas.stream()
+                .map(propiedad -> {
+                    PropiedadDTO propiedadDTO = modelMapper.map(propiedad, PropiedadDTO.class);
+
+                    // Mapear URLs de las imágenes a la propiedad DTO
+                    List<String> imagenUrls = propiedad.getImagenes().stream()
+                            .map(ImagenPropiedad::getUrl)
+                            .collect(Collectors.toList());
+                    propiedadDTO.setImagenes(imagenUrls);
+
+                    return propiedadDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<Propiedad> obtenerPropiedadesFiltradas(String departamento, String municipio, Integer cantPersonas) {
+        if (departamento != null && municipio != null && cantPersonas != null) {
+            return propiedadRepository.findByDepartamentoAndMunicipioAndCantPersonas(departamento, municipio, cantPersonas);
+        } else if (departamento != null && cantPersonas != null) {
+            return propiedadRepository.findByDepartamentoAndCantPersonas(departamento, cantPersonas);
+        } else if (departamento != null && municipio != null) {
+            return propiedadRepository.findByDepartamentoAndMunicipio(departamento, municipio);
+        } else if (departamento != null) {
+            return propiedadRepository.findByDepartamento(departamento);
+        } else if (municipio != null) {
+            return propiedadRepository.findByMunicipio(municipio);
+        } else if (cantPersonas != null) {
+            return propiedadRepository.findByCantPersonas(cantPersonas);
+        } else {
+            return propiedadRepository.findAll();
+        }
     }
 }
 

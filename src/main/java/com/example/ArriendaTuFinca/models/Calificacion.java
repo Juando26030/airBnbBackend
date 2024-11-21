@@ -6,6 +6,7 @@ package com.example.ArriendaTuFinca.models;
 //import java.util.List;
 //import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 import jakarta.persistence.Entity;
@@ -33,11 +34,10 @@ public class Calificacion {
 
     //mirar si hay problema en que sean iguales
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitud_id", unique = false, nullable = false) 
-    private Solicitud solicitud_id;
-
-    private int calificacion_propiedad;
-    private int calificacion_arrendatario;
+    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitudId", unique = false, nullable = false)
+    private Solicitud solicitud;
+    private int calificacionPropiedad;
+    private int calificacionArrendatario;
     private String comentario;
-    private LocalDate fecha_calificacion;
+    private Date fechaCalificacion;
 }

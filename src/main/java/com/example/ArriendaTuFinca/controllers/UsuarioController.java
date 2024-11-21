@@ -4,23 +4,28 @@ import java.util.List;
 
 import com.example.ArriendaTuFinca.DTOs.LoginDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
 import com.example.ArriendaTuFinca.services.UsuarioService;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping( value = "/api/usuarios")
 public class UsuarioController {
 
     // Inyección de dependencias
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // CRUD Endpoints
     @CrossOrigin
@@ -63,10 +68,18 @@ public class UsuarioController {
         return usuarioService.obtenerUsuarioPorId(id);
     }
 
+    //Get tipo usuario
+    @CrossOrigin
+    @GetMapping( value = "/tipo-usuario/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean obtenerTipoUsuario(@PathVariable Long usuarioId) {
+        return usuarioService.obtenerTipoUsuario(usuarioId);
+    }
+
     // Create
     @CrossOrigin
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        usuarioDTO.setContrasenia(passwordEncoder.encode(usuarioDTO.getContrasenia())); // Encriptar la contraseña
         try {
             UsuarioDTO nuevoUsuario = usuarioService.crearUsuario(usuarioDTO);
             return ResponseEntity.ok(nuevoUsuario);  // Devuelve el nuevo usuario creado
@@ -92,7 +105,7 @@ public class UsuarioController {
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
         try {
-            usuarioDTO.setUsuario_id(id);  // Asegura que el ID se use para actualizar el usuario correcto
+            usuarioDTO.setUsuarioId(id);  // Asegura que el ID se use para actualizar el usuario correcto
             UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(usuarioDTO);
             return ResponseEntity.ok(usuarioActualizado);
         } catch (IllegalArgumentException e) {

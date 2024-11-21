@@ -1,19 +1,23 @@
 package com.example.ArriendaTuFinca.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.ArriendaTuFinca.models.Rol;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.DTOs.UsuarioDTO;
-import com.example.ArriendaTuFinca.models.Estado;
 import com.example.ArriendaTuFinca.models.Usuario;
 import com.example.ArriendaTuFinca.repository.UsuarioRepository;
 
@@ -33,6 +37,19 @@ public class UsuarioService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    //User details service
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) {
+                return usuarioRepository.findByCorreo(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            }
+        };
+    }
+
+
+
     // Método para autenticar un usuario por correo y contraseña
     public UsuarioDTO autenticarUsuario(String correo, String contrasenia) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreoAndContrasenia(correo, contrasenia);
@@ -48,6 +65,7 @@ public class UsuarioService {
             throw new IllegalArgumentException("Correo o contraseña incorrectos.");
         }
     }
+
 
     //get
     public List<UsuarioDTO> get() {
@@ -72,8 +90,10 @@ public class UsuarioService {
     // Código existente...
 
     public boolean correoExiste(String correo) {
-        return usuarioRepository.findByCorreo(correo).isPresent();
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo); // asumiendo que tienes un método en el repositorio
+        return usuarioOpt.isPresent();
     }
+
 
     // Método actualizado para crear usuario
     public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {
@@ -84,8 +104,7 @@ public class UsuarioService {
         // Validaciones de correo y contraseña
 
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setEstado(Estado.INACTIVE); // El usuario se crea como inactivo por defecto
-        usuario.setAutenticado(false); // Usuario no autenticado por defecto
+        //usuario.setContrasenia(passwordEncoder.encode(usuarioDTO.getContrasenia())); // Encriptar la contraseña
         usuario = usuarioRepository.save(usuario);
 
         usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
@@ -101,7 +120,6 @@ public class UsuarioService {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            usuario.setEstado(Estado.ACTIVE); // Cambiar estado a activo
             usuario.setAutenticado(true); // Marcar como autenticado
             usuario = usuarioRepository.save(usuario); // Guardar cambios en la base de datos
             return modelMapper.map(usuario, UsuarioDTO.class);
@@ -115,7 +133,7 @@ public class UsuarioService {
             String subject = "Por favor active su cuenta";
             // Usar un valor configurable para la URL base
             String baseUrl = "http://localhost:8081"; // Puedes externalizar esto a application.properties
-            String activationUrl = baseUrl + "/api/usuarios/activar/" + usuario.getUsuario_id();
+            String activationUrl = baseUrl + "/api/usuarios/activar/" + usuario.getUsuarioId();
             String message = "Por favor active su cuenta haciendo clic en el siguiente enlace: " + activationUrl;
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -135,7 +153,6 @@ public class UsuarioService {
     //put
     public UsuarioDTO actualizarUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setEstado(Estado.ACTIVE);
         usuario = usuarioRepository.save(usuario);
         usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
         return usuarioDTO;
@@ -152,4 +169,32 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    //Metodo para obtener tipo de usuario
+    public boolean obtenerTipoUsuario(Long id) {
+        System.out.println("Entra al servicio para verificar tipo de usuario");
+
+        // Buscamos al usuario en la base de datos
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+
+        // Si el usuario no existe, lanzamos una excepción
+        if (optionalUsuario.isEmpty()) {
+            throw new IllegalArgumentException("El usuario no existe.");
+        }
+
+        Usuario usuario = optionalUsuario.get();
+        Rol rol = usuario.getRol();
+
+        System.out.println("Usuario ID: " + usuario.getUsuarioId());
+        System.out.println("Rol tipo: " + rol.getTipoRol());
+        System.out.println("Rol ID: " + rol.getId());
+
+        // Validamos si el rol corresponde a "USUARIO" y tiene ID 2
+        if (rol.getId() == 2 && "USUARIO".equalsIgnoreCase(rol.getTipoRol())) {
+            System.out.println("Es USUARIO con ID 2: true");
+            return true;
+        }
+
+        System.out.println("No es ADMIN con ID 1: false");
+        return false;
+    }
 }

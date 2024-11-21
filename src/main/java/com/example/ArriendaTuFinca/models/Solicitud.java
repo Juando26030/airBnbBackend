@@ -1,10 +1,7 @@
 package com.example.ArriendaTuFinca.models;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDate;
 
 import org.hibernate.annotations.SQLDelete;
@@ -26,6 +23,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.util.Date;
+
 @Entity
 @Table(name = "Solicitud")
 @Getter
@@ -35,18 +34,20 @@ import lombok.Setter;
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long solicitud_id;
+    private Long solicitudId;
 
     @ManyToOne
-    @JoinColumn(name = "arrendatario_id", referencedColumnName = "usuario_id", unique = false, nullable = false) 
-    private Usuario arrendatario_id;
+    @JoinColumn(name = "arrendatario_id", referencedColumnName = "usuarioId", unique = false, nullable = false)
+    private Usuario arrendatario;
 
-    @ManyToOne //raro
-    @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedad_id", unique = false, nullable = false) 
-    private Propiedad propiedad_id;
+    @ManyToOne
+    @JoinColumn(name = "propiedad_id", referencedColumnName = "propiedadId", unique = false, nullable = false)
+    private Propiedad propiedad;
 
-    private LocalDate fecha_inicio;
-    private LocalDate fecha_fin;
-    private int precio_por_noche;
-    
+    @OneToMany(mappedBy = "solicitud")
+    private List<Calificacion> calificaciones = new ArrayList<>();
+
+    private Date fechaInicio; // Cambiado de LocalDate a Date
+    private Date fechaFin;    // Cambiado de LocalDate a Date
+    private int huespedes;
 }

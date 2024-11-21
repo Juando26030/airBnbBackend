@@ -6,10 +6,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class CalificacionDTO {
-    private Long calificacion_id;
-    private SolicitudDTO solicitud_id; // Toca dejarlo asi porque Hybernate lo cambia
-    private int calificacion_propiedad;
-    private int calificacion_arrendatario;
+    private Long calificacionId;
+    private SolicitudDTO solicitudId; // Toca dejarlo asi porque Hybernate lo cambia
+    private int calificacionPropiedad;
+    private int calificacionArrendatario;
     private String comentario;
-    private LocalDate fecha_calificacion;
+    private LocalDate fechaCalificacion;
 }

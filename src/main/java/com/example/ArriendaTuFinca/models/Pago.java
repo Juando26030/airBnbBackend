@@ -6,6 +6,7 @@ package com.example.ArriendaTuFinca.models;
 //import java.util.List;
 //import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.Date;
 
 import com.example.ArriendaTuFinca.DTOs.SolicitudDTO;
 
@@ -30,12 +31,16 @@ import lombok.Setter;
 public class Pago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pago_id;
+    private long pagoId;
 
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitud_id", unique = false, nullable = false) 
-    private Solicitud solicitud_id;
+    @JoinColumn(name = "solicitud_id", referencedColumnName = "solicitudId", unique = false, nullable = false)
+    private Solicitud solicitud;
 
     private int monto;
-    private LocalDate fecha_pago;
+    private Date fechaPago;
+
+    private long cardNumber;
+    private int cvv;
+    private Date expDate;
 }

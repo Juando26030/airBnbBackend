@@ -1,21 +1,22 @@
 package com.example.ArriendaTuFinca.services;
 
-import java.util.Arrays;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.List;
-import java.util.ArrayList;
 
+import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.ArriendaTuFinca.repository.PropiedadRepository;
 import com.example.ArriendaTuFinca.repository.UsuarioRepository;
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
 import com.example.ArriendaTuFinca.repository.SolicitudRepository;
-import com.example.ArriendaTuFinca.repository.PropiedadRepository;
-import com.example.ArriendaTuFinca.models.Estado;
 import com.example.ArriendaTuFinca.models.Propiedad;
 import com.example.ArriendaTuFinca.models.Usuario;
 import com.example.ArriendaTuFinca.models.Solicitud;
@@ -59,31 +60,31 @@ public class SolicitudService {
         return solicitudDTO;
     }
 
-    //post
-    //ese problema que
     public SolicitudDTO crearSolicitud(SolicitudDTO solicitudDTO) {
+        long arrendatarioId = solicitudDTO.getArrendatario().getUsuarioId();
+        long propiedadId = solicitudDTO.getPropiedad().getPropiedadId();
+
+        Usuario arrendatario = usuarioRepository.findById(arrendatarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Arrendatario no encontrado"));
+        Propiedad propiedad = propiedadRepository.findById(propiedadId)
+                .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada"));
+
+        // Mapea el DTO a la entidad
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
+        solicitud.setArrendatario(arrendatario);
+        solicitud.setPropiedad(propiedad);
 
-        UsuarioDTO arrendatarioDTO = solicitudDTO.getArrendatario_id();
-        long arrendatario_id = arrendatarioDTO.getUsuario_id();
+        // Guarda la solicitud en la base de datos
+        solicitud = solicitudRepository.save(solicitud);
 
-        PropiedadDTO propiedadDTO = solicitudDTO.getPropiedad_id();
-        long propiedad_id = propiedadDTO.getPropiedad_id();
+        // Verifica el ID generado
+        System.out.println("ID generado: " + solicitud.getSolicitudId());
 
-        Optional<Usuario> arrendatarioOptional = usuarioRepository.findById(arrendatario_id);
-        Optional<Propiedad> propiedadOptional = propiedadRepository.findById(propiedad_id);
-
-        if (arrendatarioOptional.isPresent() && propiedadOptional.isPresent()) {
-            solicitud.setArrendatario_id(arrendatarioOptional.get());
-            solicitud.setPropiedad_id(propiedadOptional.get());
-            solicitud = solicitudRepository.save(solicitud);
-            solicitudDTO.setSolicitud_id(solicitud.getSolicitud_id());
-            return solicitudDTO;
-        }
-
-        throw new RuntimeException("No se pudo crear la solicitud");
-
+        // Mapea la entidad actualizada al DTO y devuelve
+        return modelMapper.map(solicitud, SolicitudDTO.class);
     }
+
+
 
     //put
     public SolicitudDTO actualizarSolicitud(SolicitudDTO solicitudDTO) {
