@@ -65,6 +65,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/usuarios/**")
                             .authenticated()
 
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/de-arrendador/**")
+                            .hasAuthority("ADMIN")
+
                         .anyRequest()
                             .authenticated())
                 .exceptionHandling(exception -> exception

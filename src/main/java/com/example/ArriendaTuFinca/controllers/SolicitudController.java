@@ -66,6 +66,10 @@ public class SolicitudController {
         solicitudService.eliminarSolicitudPorId(id);
     }
 
-    
+    @GetMapping("/de-arrendador/{arrendadorId}")
+    public ResponseEntity<List<SolicitudDTO>> getSolicitudesByArrendadorId(@PathVariable Long arrendadorId) {
+        List<SolicitudDTO> solicitudes = solicitudService.getSolicitudesByArrendadorId(arrendadorId);
+        return ResponseEntity.ok(solicitudes);
+    }
     
 }

@@ -189,12 +189,12 @@ public class UsuarioService {
         System.out.println("Rol ID: " + rol.getId());
 
         // Validamos si el rol corresponde a "USUARIO" y tiene ID 2
-        if (rol.getId() == 2 && "USUARIO".equalsIgnoreCase(rol.getTipoRol())) {
-            System.out.println("Es USUARIO con ID 2: true");
+        if (rol.getId() == 1 && "ADMIN".equalsIgnoreCase(rol.getTipoRol())) {
+            System.out.println("Es ADMIN con ID 1");
             return true;
+        } else {
+            System.out.println("Es USER con ID 2");
+            return false;
         }
-
-        System.out.println("No es ADMIN con ID 1: false");
-        return false;
     }
 }

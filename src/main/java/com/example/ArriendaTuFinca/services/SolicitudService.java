@@ -104,5 +104,15 @@ public class SolicitudService {
     public void eliminarSolicitudPorId(Long id) {
         solicitudRepository.deleteById(id);
     }
+
+    public List<SolicitudDTO> getSolicitudesByArrendadorId(Long arrendadorId) {
+        // Filtrar solicitudes por el ID del arrendador
+        List<Solicitud> solicitudes = solicitudRepository.findByPropiedadArrendadorUsuarioId(arrendadorId);
+
+        // Mapear entidades Solicitud a DTOs
+        return solicitudes.stream()
+                .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
+                .collect(Collectors.toList());
+    }
     
 }
