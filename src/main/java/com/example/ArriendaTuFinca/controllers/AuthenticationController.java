@@ -41,6 +41,7 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestHeader("Authorization") String token) {
+        System.out.println("Estoy entrando a refresh");
         System.out.println("refresh" + token);
         return ResponseEntity.ok(
                 autenticacionService.refresh(token)
